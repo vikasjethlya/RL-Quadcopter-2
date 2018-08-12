@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
-<title>Quadcopter_Project</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>Quadcopter_Project</title><script src="https://unpkg.com/jupyter-js-widgets@2.0.*/dist/embed.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 <style type="text/css">
@@ -14333,8 +14333,21 @@ uZw8QTjnnMvp/wHdcso6LGZOwwAAAABJRU5ErkJggg==
 I chooses the takeoff task . The task is to reach from current position to target position. The quadcopter had to go from :<br>
 a) Initial position : [0., 0., 10]<br>
 b) Target position : [0., 0., 50]</p>
-<p>For this task the reward function was designed to calculate the absolute difference between the current and the target pose, multiply it by -0.003 then subtract it from 1. The smaller the distances, the greater the reward:</p>
+<ul>
+<li><p>I have only chooses z coordinates to avoid the complexity  in reward functional It basically looking shorted path in vertical direction. I chooses initial position of quadcopter as [0,0,10] because if i kept z= 0 and goes up, but if being in z = 0 ends the episode, that wouldn´t be possible. The value of z won't change and keep it only 0 even after episodes ends. That’s why  started with some random distance off the ground . This will help with exploration anyways</p>
+</li>
+<li><p>In order to avoid complexity in reward function I chooses only z position in calculating the reward. Whenever the quadcopter distance is reduces i.e. coming near to target position , the reward increases.</p>
+</li>
+<li>For this task the reward function was designed to calculate the absolute difference between the current and the target pose, multiply it by -0.003 then subtract it from 1. The smaller the distances, the greater the reward: </li>
+</ul>
 <p><code>reward = 1.-.003*abs(self.sim.pose[:3] - self.target_pos).sum()</code></p>
+<ul>
+<li>There are other parameter like velocity and euler angle which i didn't use to avoid the complexity in reward function. Those can also be included if you to make your reward function more robust and stable. For Example : i can  include the self.sim.v[2] (which is the vertical velocity) into the reward function. So the agent will be rewarded to fly vertical upwards. I can also constraint the agent’s movement to the z-axis in the reward function. This gives the agent freedom to move anywhere in the x-axis and y-axis within the bounds. </li>
+<li><p>Some of the forum discussion suggested to scale or clip the rewards to some standard range, like -1.0 to +1.0 (use tanh function in reward). This avoids instability in training due to exploding gradients.</p>
+</li>
+<li><p>I will try these experiment in future.</p>
+</li>
+</ul>
 
 </div>
 </div>
@@ -14532,19 +14545,6 @@ None
 
 </div>
 </div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span> 
-</pre></div>
-
-</div>
-</div>
-</div>
-
 </div>
     </div>
   </div>
